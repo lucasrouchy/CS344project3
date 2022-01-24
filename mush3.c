@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 int main(int argc, char **argv)
 {
-  if( argc == 0){
+  if(argc == 0){
     return -1;
   }
 
@@ -35,7 +35,33 @@ int main(int argc, char **argv)
       }
       s[commandcount] = NULL;
 
-      execvp(s[0], s);
+
+      // execvp(s[0], s);
+      if (strcmp(s[0],"exit")== 0){
+        exit(0);
+      }
+
+      if (strcmp(s[0],"cd")== 0){
+        int syscall = chdir(s[1]);
+        if (syscall == -1) {
+          perror("error with system call for chdir()");
+        }
+        continue;
+      }
+
+      int f = fork();
+      if(f == 0){
+        execvp(s[0], s);
+        perror("error becuase execpv returned a value");
+        exit(1);
+      }
+      else {
+        wait(NULL);
+        // perror("error becuase execpv returned a value");
+      }
+
     }
+
+
 
   }
